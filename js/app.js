@@ -1,21 +1,87 @@
 class CalorieTracker {
   constructor() {
-    this._calorieLimit = 1000;
+    this._calorieLimit = 4000;
     this._totalCalories = 0;
     this._meals = [];
     this._workouts = [];
+
+    this._displayCaloriesLimit();
+    this._displayCaloriesTotal();
+    this._displayCaloriesConsumed();
+    this._displayCaloriesBurned();
+    this._displayCaloriesRemaining();
+    this._displayCaloriesProgress();
   }
   addMeal(meal) {
     this._meals.push(meal);
     this._totalCalories += meal.calories;
+    this._render();
   }
   addWorkout(workout) {
     this._workouts.push(workout);
     this._totalCalories -= workout.calories;
+    this._render();
   }
-  removeMeal(meal) {
-    this._meals.pop(meal);
-    this._totalCalories -= meal.calories;
+  _displayCaloriesTotal() {
+    const totalCaloriesEl = document.getElementById("calories-total");
+    totalCaloriesEl.innerHTML = this._totalCalories;
+  }
+  _displayCaloriesLimit() {
+    const calorieLimitEl = document.getElementById("calories-limit");
+    calorieLimitEl.innerHTML = this._calorieLimit;
+  }
+  _displayCaloriesConsumed() {
+    const caloriesConsumedEl = document.getElementById("calories-consumed");
+    const consumed = this._meals.reduce(
+      (total, meal) => total + meal.calories,
+      0
+    );
+    caloriesConsumedEl.innerHTML = consumed;
+  }
+  _displayCaloriesBurned() {
+    const caloriesBurnedEl = document.getElementById("calories-burned");
+    const burned = this._workouts.reduce(
+      (total, workout) => total + workout.calories,
+      0
+    );
+    caloriesBurnedEl.innerHTML = burned;
+  }
+  _displayCaloriesRemaining() {
+    const caloriesRemainingEl = document.getElementById("calories-remaining");
+    const calorieProgress = document.getElementById("calorie-progress");
+    const remain = this._calorieLimit - this._totalCalories;
+    caloriesRemainingEl.innerHTML = remain;
+    if (remain <= 0) {
+      caloriesRemainingEl.parentElement.parentElement.classList.remove(
+        "bg-light"
+      );
+      caloriesRemainingEl.parentElement.parentElement.classList.add(
+        "bg-danger"
+      );
+      calorieProgress.classList.remove("bg-success");
+      calorieProgress.classList.add("bg-danger");
+    } else {
+      caloriesRemainingEl.parentElement.parentElement.classList.remove(
+        "bg-danger"
+      );
+      caloriesRemainingEl.parentElement.parentElement.classList.add("bg-light");
+      calorieProgress.classList.remove("bg-danger");
+      calorieProgress.classList.add("bg-success");
+    }
+  }
+  _displayCaloriesProgress() {
+    const calorieProgress = document.getElementById("calorie-progress");
+    const percentage = (this._totalCalories / this._calorieLimit) * 100;
+    const width = Math.min(percentage, 100);
+    calorieProgress.style.width = `${width}%`;
+  }
+  _render() {
+    this._displayCaloriesTotal();
+    this._displayCaloriesLimit();
+    this._displayCaloriesConsumed();
+    this._displayCaloriesBurned();
+    this._displayCaloriesRemaining();
+    this._displayCaloriesProgress();
   }
 }
 
@@ -37,5 +103,8 @@ class Workout {
 const tracker = new CalorieTracker();
 const breakfast = new Meal("Breakfast", 400);
 tracker.addMeal(breakfast);
-const run = new Workout("Morning Run", 300);
+const lunch = new Meal("Lunch", 4000);
+tracker.addMeal(lunch);
+
+const run = new Workout("Morning Run", 320);
 tracker.addWorkout(run);
