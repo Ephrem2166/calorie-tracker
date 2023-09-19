@@ -1,6 +1,6 @@
 class CalorieTracker {
   constructor() {
-    this._calorieLimit = 4000;
+    this._calorieLimit = 2000;
     this._totalCalories = 0;
     this._meals = [];
     this._workouts = [];
@@ -100,11 +100,52 @@ class Workout {
   }
 }
 
-const tracker = new CalorieTracker();
-const breakfast = new Meal("Breakfast", 400);
-tracker.addMeal(breakfast);
-const lunch = new Meal("Lunch", 4000);
-tracker.addMeal(lunch);
+class App {
+  constructor() {
+    this._tracker = new CalorieTracker();
+    document
+      .getElementById("meal-form")
+      .addEventListener("submit", this._newMeal.bind(this));
+    document
+      .getElementById("workout-form")
+      .addEventListener("submit", this._newWorkout.bind(this));
+  }
+  _newMeal(e) {
+    e.preventDefault();
+    const name = document.getElementById("meal-name");
+    const calories = document.getElementById("meal-calories");
 
-const run = new Workout("Morning Run", 320);
-tracker.addWorkout(run);
+    if (name.value === "" || calories.value === "") {
+      alert("Please fill in all fields");
+      return;
+    }
+    const meal = new Meal(name.value, parseInt(calories.value));
+    this._tracker.addMeal(meal);
+    name.value = "";
+    calories.value = "";
+    const collapseMeal = document.getElementById("collapse-meal");
+    const bsCollapse = new bootstrap.Collapse(collapseMeal, {
+      toggle: true,
+    });
+  }
+  _newWorkout(e) {
+    e.preventDefault();
+    const name = document.getElementById("workout-name");
+    const calories = document.getElementById("workout-calories");
+
+    if (name.value === "" || calories.value === "") {
+      alert("Please fill in all fields");
+      return;
+    }
+    const workout = new Workout(name.value, parseInt(calories.value));
+    this._tracker.addWorkout(workout);
+    name.value = "";
+    calories.value = "";
+    const collapseWorkOut = document.getElementById("collapse-workout");
+    const bsCollapse = new bootstrap.Collapse(collapseWorkOut, {
+      toggle: true,
+    });
+  }
+}
+
+const app = new App();
