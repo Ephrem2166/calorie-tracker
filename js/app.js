@@ -181,10 +181,10 @@ class App {
       .addEventListener("submit", this._newItem.bind(this, "workout"));
     document
       .getElementById("meal-items")
-      .addEventListener("click", this._removeItems.bind(this, "meal"));
+      .addEventListener("click", this._removeItem.bind(this, "meal"));
     document
       .getElementById("workout-items")
-      .addEventListener("click", this._removeItems.bind(this, "workout"));
+      .addEventListener("click", this._removeItem.bind(this, "workout"));
     document
       .getElementById("filter-meals")
       .addEventListener("keyup", this._filterItems.bind(this, "meal"));
@@ -220,7 +220,7 @@ class App {
       toggle: true,
     });
   }
-  _removeItems(type, e) {
+  _removeItem(type, e) {
     if (
       e.target.classList.contains("delete") ||
       e.target.classList.contains("fa-xmark")
